@@ -1,0 +1,1 @@
+Continuous integration is a set of practices used in software engineering to verify at each source code change that the result of the changes does not produce regression in the developed application.

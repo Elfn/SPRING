@@ -1,0 +1,7 @@
+data:
+  username: Elimane
+
+spring:
+  profiles: en
+data:
+  username: EN
