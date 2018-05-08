@@ -20,35 +20,46 @@ import javax.validation.Valid;
 @Controller
 public class RecipeController {
 
+    public static final String REDIRECT_RECIPE = "redirect:/recipe/";
     private static final String RECIPE_RECIPEFORM_URL = "recipe/recipeform";
+    public static final String RECIPE_ID_UPDATE = "recipe/{id}/update";
+    public static final String RECIPE_NEW = "recipe/new";
+    public static final String RECIPE_ID_SHOW = "/recipe/{id}/show";
+    public static final String RECIPE = "recipe";
+    public static final String RECIPE_ID_DELETE = "recipe/{id}/delete";
+    public static final String HANDLING_NOT_FOUND_EXCEPTION = "Handling not found exception";
+    public static final String ERROR = "404error";
+    public static final String REDIRECT = "redirect:/";
+
+
     private final RecipeService recipeService;
 
     public RecipeController(RecipeService recipeService) {
         this.recipeService = recipeService;
     }
 
-    @GetMapping("/recipe/{id}/show")
+    @GetMapping(RECIPE_ID_SHOW)
     public String showById(@PathVariable String id, Model model){
 
-        model.addAttribute("recipe", recipeService.findById(id));
+        model.addAttribute("recipe", recipeService.findById(id).block());
 
         return "recipe/show";
     }
 
-    @GetMapping("recipe/new")
+    @GetMapping(RECIPE_NEW)
     public String newRecipe(Model model){
         model.addAttribute("recipe", new RecipeCommand());
 
         return "recipe/recipeform";
     }
 
-    @GetMapping("recipe/{id}/update")
+    @GetMapping(RECIPE_ID_UPDATE)
     public String updateRecipe(@PathVariable String id, Model model){
-        model.addAttribute("recipe", recipeService.findCommandById(id));
+        model.addAttribute("recipe", recipeService.findCommandById(id).block());
         return RECIPE_RECIPEFORM_URL;
     }
 
-    @PostMapping("recipe")
+    @PostMapping(RECIPE)
     public String saveOrUpdate(@Valid @ModelAttribute("recipe") RecipeCommand command, BindingResult bindingResult){
 
         if(bindingResult.hasErrors()){
@@ -57,33 +68,34 @@ public class RecipeController {
                 log.debug(objectError.toString());
             });
 
+
             return RECIPE_RECIPEFORM_URL;
         }
 
-        RecipeCommand savedCommand = recipeService.saveRecipeCommand(command);
+        RecipeCommand savedCommand = recipeService.saveRecipeCommand(command).block();
 
-        return "redirect:/recipe/" + savedCommand.getId() + "/show";
+        return REDIRECT_RECIPE + savedCommand.getId() + "/show";
     }
 
-    @GetMapping("recipe/{id}/delete")
+    @GetMapping(RECIPE_ID_DELETE)
     public String deleteById(@PathVariable String id){
 
         log.debug("Deleting id: " + id);
 
         recipeService.deleteById(id);
-        return "redirect:/";
+        return REDIRECT;
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NotFoundException.class)
     public ModelAndView handleNotFound(Exception exception){
 
-        log.error("Handling not found exception");
+        log.error(HANDLING_NOT_FOUND_EXCEPTION);
         log.error(exception.getMessage());
 
         ModelAndView modelAndView = new ModelAndView();
 
-        modelAndView.setViewName("404error");
+        modelAndView.setViewName(ERROR);
         modelAndView.addObject("exception", exception);
 
         return modelAndView;

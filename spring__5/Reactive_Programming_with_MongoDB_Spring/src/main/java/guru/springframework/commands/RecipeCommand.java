@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.URL;
+import reactor.core.publisher.Mono;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -21,7 +22,7 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
-public class RecipeCommand {
+public class RecipeCommand  {
     private String id;
 
     @NotBlank
