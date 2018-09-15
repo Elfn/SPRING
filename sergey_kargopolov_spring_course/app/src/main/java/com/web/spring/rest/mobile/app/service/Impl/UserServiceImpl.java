@@ -1,12 +1,16 @@
-package com.web.spring.rest.mobile.app.service;
+package com.web.spring.rest.mobile.app.service.Impl;
 
 import com.web.spring.rest.mobile.app.io.entity.UserEntity;
 import com.web.spring.rest.mobile.app.repository.UserRepository;
+import com.web.spring.rest.mobile.app.service.UserService;
 import com.web.spring.rest.mobile.app.shared.dto.UserDTO;
 import com.web.spring.rest.mobile.app.shared.util.Utils;
 import com.web.spring.rest.mobile.app.ui.model.response.UserRest;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +27,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     Utils utils;
+
+    @Autowired
+    BCryptPasswordEncoder passwordEncoder;
 
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -42,7 +49,7 @@ public class UserServiceImpl implements UserService {
         //We have to put it there  else we'll get 500 error
         //data which are auto-generated
         String userId = utils.generateUserId(30);
-        userEntity.setEncryptedPassword("test");
+        userEntity.setEncryptedPassword(passwordEncoder.encode(userDTO.getPassword()));
         userEntity.setUserId(userId);
 
         UserEntity userStored = userRepository.save(userEntity);
@@ -50,5 +57,10 @@ public class UserServiceImpl implements UserService {
         BeanUtils.copyProperties(userStored, userToReturn);
 
         return userToReturn;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
+        return null;
     }
 }
