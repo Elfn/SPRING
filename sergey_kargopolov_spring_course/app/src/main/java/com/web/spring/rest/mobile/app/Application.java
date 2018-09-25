@@ -14,8 +14,13 @@ public class Application {
     }
 
     @Bean//To encrypt password before store it in database
-    public BCryptPasswordEncoder bCryptPasswordEncoder()
-    {
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public SpringApplicationContext springApplicationContext()
+    {
+        return new SpringApplicationContext();
     }
 }

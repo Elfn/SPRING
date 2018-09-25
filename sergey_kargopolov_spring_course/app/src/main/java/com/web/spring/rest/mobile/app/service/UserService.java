@@ -9,7 +9,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 
 //UserDetails is The interface which requires only one read-only method(loadUserByUsername()),
 // which simplifies support for new data-access strategies.
-public interface UserService extends UserDetailsService{
+public interface UserService extends UserDetailsService {
 
     UserDTO createUser(UserDTO userDTO);
+
+    UserDTO getUser(String email);
 }

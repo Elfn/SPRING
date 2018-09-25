@@ -11,27 +11,27 @@ import org.springframework.stereotype.Component;
  * Created by Elimane on Sep, 2018, at 12:45
  */
 @Component
-public class UserBootstrap implements ApplicationListener<ContextRefreshedEvent>{
+public class UserBootstrap implements ApplicationListener<ContextRefreshedEvent> {
 
 
     @Autowired
     UserService userService;
+
     @Override
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
 
-       // loadData();
+//       loadData();
 
     }
 
-    public void loadData()
-    {
+    public void loadData() {
         UserDTO userDTO = new UserDTO();
         userDTO.setEncryptedPassword("test");
         userDTO.setFirstName("Elsior");
         userDTO.setEmail("sss@");
         userDTO.setLastName("Fofana");
         userDTO.setUserId("id_");
-         userService.createUser(userDTO);
+        userService.createUser(userDTO);
 
 
     }

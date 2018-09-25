@@ -10,20 +10,20 @@ public class UserRest {
 
     //We don't want user password to be returned or other sensitive information
 
-   // private String userID;
+    private String userID;
     private String firstName;
     private String lastName;
-    private String password;
+    //private String password;
     private String email;
 
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
+//    public String getPassword() {
+//        return password;
+//    }
+//
+//    public void setPassword(String password) {
+//        this.password = password;
+//    }
 
 
     public String getFirstName() {
@@ -48,5 +48,13 @@ public class UserRest {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getUserID() {
+        return userID;
+    }
+
+    public void setUserID(String userID) {
+        this.userID = userID;
     }
 }

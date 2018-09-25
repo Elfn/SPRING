@@ -18,14 +18,12 @@ public class UserController {
     UserService userService;
 
     @GetMapping
-    public String getUser()
-    {
+    public String getUser() {
         return "get user was called";
     }
 
     @PostMapping
-    public UserRest createUser(@RequestBody UserDetailsRequestModel userDetails)
-    {
+    public UserRest createUser(@RequestBody UserDetailsRequestModel userDetails) {
 
         //BeanUtils Copy the property values of the given source bean into the target bean.
 
@@ -34,22 +32,19 @@ public class UserController {
         BeanUtils.copyProperties(userDetails, userDTO);
 
 
-
         UserDTO createdUser = userService.createUser(userDTO);
         BeanUtils.copyProperties(createdUser, returnValue);
 
         return returnValue;
     }
 
-@PutMapping
-    public String updateUser()
-    {
+    @PutMapping
+    public String updateUser() {
         return "update user was called";
     }
 
     @DeleteMapping
-    public String deleteUser()
-    {
+    public String deleteUser() {
         return "delete user was called";
     }
 }
