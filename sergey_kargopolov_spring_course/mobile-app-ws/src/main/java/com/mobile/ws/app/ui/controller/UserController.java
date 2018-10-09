@@ -1,5 +1,10 @@
 package com.mobile.ws.app.ui.controller;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -10,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.mobile.ws.app.exceptions.UserServiceExceptions;
@@ -93,6 +99,23 @@ public class UserController {
 		responseValue.setOperationResult(RequestOperationStatus.SUCCESS.name());
 
 		return responseValue;
+	}
+
+	@GetMapping(path = { "all" }, produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
+	public List<UserRest> getUsers(@RequestParam(name = "page", defaultValue = "1") int page,
+			@RequestParam(name = "limit", defaultValue = "2") int limit) {
+		
+		List<UserRest> valueToReturn = new ArrayList<>();
+		List<UserDto> users = userService.getUsers(page, limit);
+
+		users.forEach(userDto -> {
+			UserRest newRestUser = new UserRest();
+			BeanUtils.copyProperties(userDto, newRestUser);
+			valueToReturn.add(newRestUser);
+		});
+
+		return valueToReturn;
+
 	}
 
 }
