@@ -11,7 +11,7 @@ public class AppProperties {
 	@Autowired
 	private Environment env;
 	
-	//Here we are reading SECRET TOKEN from application property
+	//Here we are reading SECRET TOKEN from applications.properties file
 	public String getTokenSecret()
 	{
 		return env.getProperty("tokenSecret");

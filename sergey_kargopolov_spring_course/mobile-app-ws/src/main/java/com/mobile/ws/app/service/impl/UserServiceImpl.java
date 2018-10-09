@@ -10,11 +10,13 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.mobile.ws.app.exceptions.UserServiceExceptions;
 import com.mobile.ws.app.io.entity.UserEntity;
 import com.mobile.ws.app.repository.UserRepository;
 import com.mobile.ws.app.service.UserService;
 import com.mobile.ws.app.shared.dto.UserDto;
 import com.mobile.ws.app.shared.utils.Utils;
+import com.mobile.ws.app.ui.model.response.ErrorMessages;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -35,8 +37,9 @@ public class UserServiceImpl implements UserService {
 		UserEntity userToCheck = userRepository.findByEmail(userdto.getEmail());
 
 		if (userToCheck != null)
-			throw new RuntimeException("User already exist!!!");
+			throw new UserServiceExceptions(ErrorMessages.RECORD_ALREADY_EXISTS.getErrorMessage());
 
+		
 		UserDto userToReturn = new UserDto();
 		UserEntity userToPersist = new UserEntity();
 		BeanUtils.copyProperties(userdto, userToPersist);
@@ -72,7 +75,7 @@ public class UserServiceImpl implements UserService {
 		UserEntity userToGet = userRepository.findByEmail(email);
 
 		if (userToGet == null)
-			throw new UsernameNotFoundException(email);
+			throw new UserServiceExceptions(ErrorMessages.NO_RECORD_FOUND.getErrorMessage());
 
 		UserDto userToReturn = new UserDto();
 
@@ -87,13 +90,48 @@ public class UserServiceImpl implements UserService {
 		UserEntity userToGet = userRepository.findUserByUserId(id);
 
 		if (userToGet == null)
-			throw new UsernameNotFoundException(id);
+			throw new UserServiceExceptions(ErrorMessages.NO_RECORD_FOUND.getErrorMessage());
 
 		UserDto userToReturn = new UserDto();
 
 		BeanUtils.copyProperties(userToGet, userToReturn);
 
 		return userToReturn;
+	}
+
+	@Override
+	public UserDto updateUser(String id, UserDto user) {
+		
+		UserDto userToReturn = new UserDto();
+	
+		
+		UserEntity userToUpdate =  userRepository.findUserByUserId(id);
+		
+		if(userToUpdate == null)
+			throw new  UserServiceExceptions(ErrorMessages.NO_RECORD_FOUND.getErrorMessage());
+		
+		userToUpdate.setFirstName(user.getFirstName());
+		userToUpdate.setLastName(user.getLastName());
+		userToUpdate.setEmail(user.getEmail());
+		userToUpdate.setPassword(user.getPassword());
+		
+		UserEntity userUpdated = userRepository.save(userToUpdate);
+		
+		
+		BeanUtils.copyProperties(userUpdated, userToReturn);
+		
+		return userToReturn;
+	}
+
+	@Override
+	public void deleteUser(String id) {
+		
+		UserDto user = getUserId(id);
+		UserEntity userToDelete = new UserEntity();
+		BeanUtils.copyProperties(user, userToDelete);
+		
+		userRepository.delete(userToDelete);
+		
 	}
 
 }
