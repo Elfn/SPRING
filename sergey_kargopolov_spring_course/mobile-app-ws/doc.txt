@@ -1,0 +1,109 @@
+
+>before launch mvn install command:
+rm -rf rm -rf ~/.m2/repository/org/apache/
+
+
+>try using bellow maven command
+
+mvn clean install -DskipTests
+
+-DskipTests compiles the tests, but skips running them
+
+>chmod a+x *.sh 
+is to make all .sh files executable such that deploy tomcat server
+
+>To kill process locking port 8080
+sudo lsof -i tcp:8080
+
+
+right click your project and choose Properties.
+choose Web Project Settings and change the Context root to "/yourProjectName"
+
+
+
+
+
+How to check if Tomcat is already running and kill existing tomcat process
+
+Step-1. Find out the process using command ps -ef | grep tomcat
+
+> ps -ef | grep tomcat
+
+
+ /****************
+ *               *
+ *	AWS EC2 PART			 *
+ *				 *
+ **************/
+
+To launch AWS ec2 instance(Server) via ssh
+> ssh -i "name of key pair file" "public IP or public DNS"
+Key pair allows us to launch ec2 server
+
+TO update AWS EC2 server software packages and Java
+1- Update packages
+> sudo yum update
+2- Update Java
+>yum list java* take actual version from the list for put it in next command
+>sudo yum install "java's version" -> java-1.8.0
+3- Change version
+> sudo /usr/sbin/alternatives --config java
+
+
+To  Download & Install Apache Tomcat on AWS EC2 Linux Server
+1.yum list tomcat*
+2.sudo yum install tomcat8
+3.sudo yum install tomcat version from the list-admin-webapps(To manage installed tomcat8)
+4.sudo service tomcat8 start
+5."ec2-54-189-172-247.us-west-2.compute.amazonaws.com:8080/manager/html" (ec2-54-189-172-247.us-west-2.compute.amazonaws.com is public DNS domain in your EC2 instance on Amazon WS) to verify if tomcat is running
+6.sudo service tomcat8 stop
+7.sudo service tomcat8 restart
+8. /usr/share/tomcat8/webapps/manager/META-INF/context.xml content shoulb be like this:
+
+<Context privileged="true" antiResourceLocking="false" 
+     docBase="${catalina.home}/webapps/manager">
+        <Valve className="org.apache.catalina.valves.RemoteAddrValve" allow="^.*$" />
+  </Context>
+
+
+
+To Configure Apache Tomcat Users
+1.whereis tomcat8
+2.cd /usr/share/tomcat8
+3.ls
+4.cd conf
+5. sudo vi tomcat-users.xml
+6. add following tag:
+<role rolename="manager-gui"/>
+<user username="root" password="root" roles="manager-gui"/> 
+7. restart tomcat
+
+sudo yum remove tomcat8 tomcat8-admin-webapps
+
+
+To Download and Install MySQL Server on EC2 Linux Server
+1.sudo yum install mysql-server
+2.sudo service mysqld start
+3.sudo service mysqld status
+4.sudo /usr/bin/mysql_secure_installation -> to set root informations username/password
+5.mysql -u root -p
+
+
+To Create Database and Add Database User
+1.show databases;
+2.create database "db's name";
+3.create user 'devexp'@'localhost' identified by 'devexp';
+4.grant all privileges on mobiledb.* to 'devexp'@'localhost';
+5.flush privileges;
+6.mysql -u devexp -p
+7.show databases;
+
+To Deploy Our Web Service App on Apache Tomcat
+1.Go to applcation in the terminal
+2.mvn install -DskipTests
+3.cd application/target
+4.rename com.mobile.app.ws-0.0.1-SNAPSHOT.war to mobile-app-ws.war -> (mobile-app-ws is context name)
+5.Go to tomcat manager -> "ec2-54-189-172-247.us-west-2.compute.amazonaws.com:8080/manager/html"
+6.Go to "War file to deploy" upload your war file and click on deploy
+7.
+ 

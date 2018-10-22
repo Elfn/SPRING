@@ -140,21 +140,19 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public List<UserDto> getUsers(int page, int limit) {
 
-	
 		List<UserDto> returnedValue = new ArrayList<>();
-		
-		page =  (page>0) ? page - 1 : null;
-		
-		//Abstract interface for pagination information
+
+		//To always make page number begin at 1 not 0
+		page = (page > 0) ? page - 1 : null;
+
+		// Abstract interface for pagination information
 		Pageable pageableRequest = PageRequest.of(page, limit);
 
-		//A page is a sublist of a list of objects. It allows gain information 
-		//about the position of it in the containing entire list
+		// A page is a sublist of a list of objects. It allows gain information
+		// about the position of it in the containing entire list
 		Page<UserEntity> pages = userRepository.findAll(pageableRequest);
-		
-		
-		
-		List<UserEntity> users =  pages.getContent();
+
+		List<UserEntity> users = pages.getContent();
 
 		users.forEach(userEntity -> {
 			UserDto newDto = new UserDto();
