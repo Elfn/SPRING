@@ -1,11 +1,16 @@
 package com.mobile.ws.app.ui.model.response;
 
-public class UserRest {
+import org.springframework.hateoas.ResourceSupport;
+
+import java.util.List;
+
+public class UserRest extends ResourceSupport {
 
 	private String userId;
 	private String firstName;
 	private String lastName;
 	private String email;
+	private List<AddressRest> addresses;
 
 	public String getUserId() {
 		return userId;
@@ -39,4 +44,11 @@ public class UserRest {
 		this.email = email;
 	}
 
+	public List<AddressRest> getAddresses() {
+		return addresses;
+	}
+
+	public void setAddresses(List<AddressRest> addresses) {
+		this.addresses = addresses;
+	}
 }

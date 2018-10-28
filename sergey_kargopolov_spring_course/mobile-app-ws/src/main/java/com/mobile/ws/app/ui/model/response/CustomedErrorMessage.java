@@ -2,7 +2,7 @@ package com.mobile.ws.app.ui.model.response;
 
 import java.util.Date;
 
-public class CustomedErrorMessage {
+public class  CustomedErrorMessage {
 
 	private Date timeStamp;
 	private String message;

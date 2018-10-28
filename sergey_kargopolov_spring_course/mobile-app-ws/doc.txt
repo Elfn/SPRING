@@ -13,7 +13,8 @@ mvn clean install -DskipTests
 is to make all .sh files executable such that deploy tomcat server
 
 >To kill process locking port 8080
-sudo lsof -i tcp:8080
+1. sudo lsof -i tcp:8080
+2. kill -15 PID
 
 
 right click your project and choose Properties.
@@ -107,3 +108,27 @@ To Deploy Our Web Service App on Apache Tomcat
 6.Go to "War file to deploy" upload your war file and click on deploy
 7.
  
+
+/****************
+ *               *
+ *	HATEOAS			 *
+ *				 *
+ **************/
+
+ HATEOAS-> Hypermedia As The Engine of Application State
+ Is a constraint of the REST application architecture.
+ A hypermedia-driven site provides information to navigate
+ the site's REST interfaces, it allows add links in server's
+ response via REST WEBSERVIces endpoints, and to navigate as we wish
+ through that links
+
+
+ HAL -> HYPERTEXT APPLICATION LANGAGE
+ HAL is a simple format that gives a consistent and easy way to hyperlink between resources in your API.
+ Adopting HAL will make your API explorable, and its documentation easily discoverable from within the API itself
+
+ application/hal+json
+ Resources<T>
+ Resource<T>
+
+

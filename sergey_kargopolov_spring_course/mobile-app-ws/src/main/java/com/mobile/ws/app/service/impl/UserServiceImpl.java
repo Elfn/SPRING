@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.mobile.ws.app.shared.dto.AddressDto;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -27,140 +29,148 @@ import com.mobile.ws.app.ui.model.response.ErrorMessages;
 @Service
 public class UserServiceImpl implements UserService {
 
-	@Autowired
-	UserRepository userRepository;
+    @Autowired
+    UserRepository userRepository;
 
-	@Autowired
-	Utils utils;
+    @Autowired
+    Utils utils;
 
-	@Autowired // Implementation of PasswordEncoder that uses the BCrypt strong hashing
-				// function
-	BCryptPasswordEncoder bCryptPasswordEncoder;
+    @Autowired // Implementation of PasswordEncoder that uses the BCrypt strong hashing
+            // function
+            BCryptPasswordEncoder bCryptPasswordEncoder;
 
-	@Override
-	public UserDto createUser(UserDto userdto) {
+    @Override
+    public UserDto createUser(UserDto userdto) {
 
-		UserEntity userToCheck = userRepository.findByEmail(userdto.getEmail());
 
-		if (userToCheck != null)
-			throw new UserServiceExceptions(ErrorMessages.RECORD_ALREADY_EXISTS.getErrorMessage());
+        ModelMapper modelMapper = new ModelMapper();
 
-		UserDto userToReturn = new UserDto();
-		UserEntity userToPersist = new UserEntity();
-		BeanUtils.copyProperties(userdto, userToPersist);
+        if (userRepository.findByEmail(userdto.getEmail()) != null)
+            throw new UserServiceExceptions(ErrorMessages.RECORD_ALREADY_EXISTS.getErrorMessage());
 
-		String userPublicId = utils.generateUserId(30);
 
-		// User's password will be encrypted before stored in db
-		userToPersist.setEcryptedPassword(bCryptPasswordEncoder.encode(userdto.getPassword()));
-		userToPersist.setUserId(userPublicId);
-		// userToPersist.setEmailVerificationStatus(false);
+        for (int i = 0; i < userdto.getAddresses().size(); i++) {
+            AddressDto address = userdto.getAddresses().get(i);
+            address.setUserDetails(userdto);
+            address.setAddressId(utils.generateAddressId(30));
+            userdto.getAddresses().set(i, address);
+        }
 
-		UserEntity userStored = userRepository.save(userToPersist);
+        UserEntity userToPersist = modelMapper.map(userdto, UserEntity.class);
 
-		BeanUtils.copyProperties(userStored, userToReturn);
+        String userPublicId = utils.generateUserId(30);
 
-		return userToReturn;
-	}
+        // User's password will be encrypted before stored in db
+        userToPersist.setEcryptedPassword(bCryptPasswordEncoder.encode(userdto.getPassword()));
+        userToPersist.setUserId(userPublicId);
 
-	@Override
-	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        // userToPersist.setEmailVerificationStatus(false);
 
-		UserEntity userAuth = userRepository.findByEmail(email);
+        UserEntity userStored = userRepository.save(userToPersist);
 
-		if (userAuth == null)
-			throw new UsernameNotFoundException(email);
+        UserDto userToReturn = modelMapper.map(userStored, UserDto.class);
 
-		return new User(userAuth.getEmail(), userAuth.getEcryptedPassword(), new ArrayList<>());
-	}
+        return userToReturn;
+    }
 
-	@Override
-	public UserDto getUser(String email) {
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
-		UserEntity userToGet = userRepository.findByEmail(email);
+        UserEntity userAuth = userRepository.findByEmail(email);
 
-		if (userToGet == null)
-			throw new UserServiceExceptions(ErrorMessages.NO_RECORD_FOUND.getErrorMessage());
+        if (userAuth == null)
+            throw new UsernameNotFoundException(email);
 
-		UserDto userToReturn = new UserDto();
+        return new User(userAuth.getEmail(), userAuth.getEcryptedPassword(), new ArrayList<>());
+    }
 
-		BeanUtils.copyProperties(userToGet, userToReturn);
+    @Override
+    public UserDto getUser(String email) {
 
-		return userToReturn;
-	}
+        UserEntity userToGet = userRepository.findByEmail(email);
 
-	@Override
-	public UserDto getUserId(String id) {
+        if (userToGet == null)
+            throw new UserServiceExceptions(ErrorMessages.NO_RECORD_FOUND.getErrorMessage());
 
-		UserEntity userToGet = userRepository.findUserByUserId(id);
+        UserDto userToReturn = new UserDto();
 
-		if (userToGet == null)
-			throw new UserServiceExceptions(ErrorMessages.NO_RECORD_FOUND.getErrorMessage());
+        BeanUtils.copyProperties(userToGet, userToReturn);
 
-		UserDto userToReturn = new UserDto();
+        return userToReturn;
+    }
 
-		BeanUtils.copyProperties(userToGet, userToReturn);
+    @Override
+    public UserDto getUserId(String id) {
 
-		return userToReturn;
-	}
+        UserEntity userToGet = userRepository.findUserByUserId(id);
 
-	@Override
-	public UserDto updateUser(String id, UserDto user) {
+        if (userToGet == null)
+            throw new UserServiceExceptions(ErrorMessages.NO_RECORD_FOUND.getErrorMessage());
 
-		UserDto userToReturn = new UserDto();
+        UserDto userToReturn = new UserDto();
 
-		UserEntity userToUpdate = userRepository.findUserByUserId(id);
+        BeanUtils.copyProperties(userToGet, userToReturn);
 
-		if (userToUpdate == null)
-			throw new UserServiceExceptions(ErrorMessages.NO_RECORD_FOUND.getErrorMessage());
+        return userToReturn;
+    }
 
-		userToUpdate.setFirstName(user.getFirstName());
-		userToUpdate.setLastName(user.getLastName());
-		userToUpdate.setEmail(user.getEmail());
-		userToUpdate.setPassword(user.getPassword());
+    @Override
+    public UserDto updateUser(String id, UserDto user) {
 
-		UserEntity userUpdated = userRepository.save(userToUpdate);
+        UserDto userToReturn = new UserDto();
 
-		BeanUtils.copyProperties(userUpdated, userToReturn);
+        UserEntity userToUpdate = userRepository.findUserByUserId(id);
 
-		return userToReturn;
-	}
+        if (userToUpdate == null)
+            throw new UserServiceExceptions(ErrorMessages.NO_RECORD_FOUND.getErrorMessage());
 
-	@Override
-	public void deleteUser(String id) {
+        userToUpdate.setFirstName(user.getFirstName());
+        userToUpdate.setLastName(user.getLastName());
+        userToUpdate.setEmail(user.getEmail());
+        userToUpdate.setPassword(user.getPassword());
 
-		UserDto user = getUserId(id);
-		UserEntity userToDelete = new UserEntity();
-		BeanUtils.copyProperties(user, userToDelete);
+        UserEntity userUpdated = userRepository.save(userToUpdate);
 
-		userRepository.delete(userToDelete);
+        BeanUtils.copyProperties(userUpdated, userToReturn);
 
-	}
+        return userToReturn;
+    }
 
-	@Override
-	public List<UserDto> getUsers(int page, int limit) {
+    @Override
+    public void deleteUser(String id) {
 
-		List<UserDto> returnedValue = new ArrayList<>();
+        UserDto user = getUserId(id);
+        UserEntity userToDelete = new UserEntity();
+        BeanUtils.copyProperties(user, userToDelete);
 
-		//To always make page number begin at 1 not 0
-		page = (page > 0) ? page - 1 : null;
+        userRepository.delete(userToDelete);
 
-		// Abstract interface for pagination information
-		Pageable pageableRequest = PageRequest.of(page, limit);
+    }
 
-		// A page is a sublist of a list of objects. It allows gain information
-		// about the position of it in the containing entire list
-		Page<UserEntity> pages = userRepository.findAll(pageableRequest);
+    @Override
+    public List<UserDto> getUsers(int page, int limit) {
 
-		List<UserEntity> users = pages.getContent();
+        List<UserDto> returnedValue = new ArrayList<>();
 
-		users.forEach(userEntity -> {
-			UserDto newDto = new UserDto();
-			BeanUtils.copyProperties(userEntity, newDto);
-			returnedValue.add(newDto);
-		});
+        //To always make page number begin at 1 not 0
+        page = (page > 0) ? page - 1 : null;
 
-		return returnedValue;
-	}
+        // Abstract interface for pagination information
+        Pageable pageableRequest = PageRequest.of(page, limit);
+
+        // A page is a sublist of a list of objects. It allows gain information
+        // about the position of it in the containing entire list
+        Page<UserEntity> pages = userRepository.findAll(pageableRequest);
+
+        List<UserEntity> users = pages.getContent();
+
+        users.forEach(userEntity -> {
+            UserDto newDto = new UserDto();
+            BeanUtils.copyProperties(userEntity, newDto);
+            returnedValue.add(newDto);
+        });
+
+        return returnedValue;
+    }
 
 }
