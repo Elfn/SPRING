@@ -2,6 +2,7 @@
 <h1>LOGIN</h1>
 <div class="container">
 <div class="alert alert-warning" *ngIf="isInvalid" >{{errorMessage}}</div>
+<div class="alert alert-warning" *ngIf="this._authService.isLoggedIn()" >{{alreadyloggedMessage}}</div>
 <div>
   UserName : <input type="text" name="lgn" [(ngModel)]="username">
   Password : <input type="password" name="pwd" [(ngModel)]="password">

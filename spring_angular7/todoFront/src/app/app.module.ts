@@ -1,3 +1,4 @@
+import { HardCodedAuthenticationService } from './services/hard-coded-authentication.service';
 import { LogoutComponent } from './components/logout/logout.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
@@ -12,7 +13,6 @@ import { ErrorComponent } from './components/error/error.component';
 import { DateFormatPipe } from './pipes/date-format.pipe';
 import { FooterComponent } from './components/footer/footer.component';
 import { MenuComponent } from './components/menu/menu.component';
-import { RouteGuardService } from 'src/app/services/route-guard.service';
 
 let INITIAL_COMPONENTS = [AppComponent,WelcomeComponent,LoginComponent,ListTodosComponent,ErrorComponent,MenuComponent,FooterComponent,LogoutComponent];
 
@@ -24,7 +24,7 @@ let INITIAL_COMPONENTS = [AppComponent,WelcomeComponent,LoginComponent,ListTodos
     AppRoutingModule,
     FormsModule
   ],
-  providers: [DateFormatPipe],
+  providers: [DateFormatPipe,HardCodedAuthenticationService],
   bootstrap: [AppComponent]
 })
 export class AppModule {
