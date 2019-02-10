@@ -16,7 +16,7 @@ export class LoginComponent implements OnInit {
   password : string ;
   
 
-  constructor(private _router : Router, private _authService : HardCodedAuthenticationService) { }
+  constructor(private _router : Router, public _authService : HardCodedAuthenticationService) { }
 
   ngOnInit() {
   }
@@ -26,13 +26,13 @@ export class LoginComponent implements OnInit {
     
       //console.log(this.username)
 
-      if(this._authService.isLoggedIn()){
-        this._authService.getMessage().subscribe((message: string) => {
-          this.alreadyloggedMessage= message;
+    //   if(this._authService.isLoggedIn()){
+    //     this._authService.getMessage().subscribe((message: string) => {
+    //       this.alreadyloggedMessage= message;
          
-     });
-     this._router.navigate(['login'])
-      }
+    //  });
+    //  this._router.navigate(['login'])
+    //   }
       
      
     this.isInvalid = this._authService.authenticate(this.username,this.password) ? false  : true;

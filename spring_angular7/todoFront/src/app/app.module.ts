@@ -13,6 +13,7 @@ import { ErrorComponent } from './components/error/error.component';
 import { DateFormatPipe } from './pipes/date-format.pipe';
 import { FooterComponent } from './components/footer/footer.component';
 import { MenuComponent } from './components/menu/menu.component';
+import { HttpClientModule } from '@angular/common/http';
 
 let INITIAL_COMPONENTS = [AppComponent,WelcomeComponent,LoginComponent,ListTodosComponent,ErrorComponent,MenuComponent,FooterComponent,LogoutComponent];
 
@@ -22,7 +23,8 @@ let INITIAL_COMPONENTS = [AppComponent,WelcomeComponent,LoginComponent,ListTodos
   imports: [
     BrowserModule,
     AppRoutingModule,
-    FormsModule
+    FormsModule,
+    HttpClientModule
   ],
   providers: [DateFormatPipe,HardCodedAuthenticationService],
   bootstrap: [AppComponent]

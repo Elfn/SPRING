@@ -5,3 +5,8 @@
 <div>
   Go to todos <a routerLink='/todos'>Here</a>
 </div>
+<div class="container">
+  <button class="btn btn-success" (click)="getWelcomeMessage()">Get welcome message</button>
+  <h2>{{message}}</h2>
+  <h2>{{errorMessage}}</h2>
+</div>
