@@ -1,1 +1,1 @@
-![spring](https://github.com/Elfn/SPRING/assets/29838473/0e6065d5-d345-4dd7-9ff9-8bb9669f8e04)
+![image](https://github.com/Elfn/SPRING/assets/29838473/5c9853b5-39aa-458e-a37b-3cf2e698332a)
